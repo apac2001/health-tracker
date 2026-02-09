@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>血壓 7-2-2 紀錄工具 (流暢輸入版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase Libraries -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        window.bpApp = { db, auth, appId, user: null };
+
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        };
+
+        initAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            window.bpApp.user = user;
+            if (user) {
+                document.getElementById('cloud-status').innerText = "雲端同步中 (ID: " + user.uid.substring(0,8) + ")";
+                loadFromCloud(user.uid);
+            }
+        });
+
+        async function loadFromCloud(uid) {
+            const docRef = doc(db, 'artifacts', appId, 'users', uid, 'bp_data', 'current_722');
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                window.updateStateFromCloud(docSnap.data().records);
+            }
+        }
+
+        window.saveToCloud = async (data) => {
+            if (!window.bpApp.user) return;
+            const uid = window.bpApp.user.uid;
+            const docRef = doc(db, 'artifacts', appId, 'users', uid, 'bp_data', 'current_722');
+            try {
+                await setDoc(docRef, { records: data, updatedAt: new Date().toISOString() });
+                const ind = document.getElementById('sync-indicator');
+                ind.innerText = "● 已存檔";
+                setTimeout(() => { ind.innerText = ""; }, 2000);
+            } catch (e) { console.error(e); }
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
+        .high-bp { background-color: #fef2f2; color: #dc2626; border-color: #fecaca; }
+        .normal-bp { background-color: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+        .chart-container { position: relative; width: 100%; height: 300px; }
+        @media print { .no-print { display: none; } }
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="p-2 md:p-6">
+
+    <div class="max-w-6xl mx-auto space-y-4">
+        
+        <header class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="bg-teal-600 text-white p-3 rounded-xl shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-800">血壓 7-2-2 居家紀錄表</h1>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span id="cloud-status" class="text-xs text-slate-400">連接中...</span>
+                            <span id="sync-indicator" class="text-xs text-teal-500 font-bold ml-2"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2 no-print flex-wrap justify-center">
+                    <button onclick="copyReport()" class="px-4 py-2 text-sm font-medium text-teal-600 bg-teal-50 rounded-lg hover:bg-teal-100 transition">複製文字報告</button>
+                    <button onclick="resetData()" class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition">清空資料</button>
+                    <button onclick="window.print()" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 shadow-md transition">列印/存 PDF</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <p class="text-slate-500 text-xs">7 天平均收縮壓 (高壓)</p>
+                <p id="avg-sys" class="text-3xl font-bold text-teal-600">--</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <p class="text-slate-500 text-xs">7 天平均舒張壓 (低壓)</p>
+                <p id="avg-dia" class="text-3xl font-bold text-teal-600">--</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <p class="text-slate-500 text-xs">健康狀態評估</p>
+                <p id="health-status" class="text-base font-bold text-slate-600">等待輸入...</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[650px]">
+                    <thead class="bg-slate-50 text-slate-600 text-xs">
+                        <tr>
+                            <th class="p-4 border-b">日期</th>
+                            <th class="p-4 border-b text-center bg-blue-50/30">早上 (起床後一小時)</th>
+                            <th class="p-4 border-b text-center bg-indigo-50/30">晚上 (睡前一小時)</th>
+                            <th class="p-4 border-b">備註 / 症狀</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tracker-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div class="chart-container"><canvas id="trendChart"></canvas></div>
+        </section>
+
+    </div>
+
+    <script>
+        const DAYS = 7;
+        let chart = null;
+        let state = JSON.parse(localStorage.getItem('bp_722_data')) || Array.from({ length: DAYS }, (_, i) => ({
+            id: i + 1, date: '', morning: { s1: '', d1: '', s2: '', d2: '', avgS: 0, avgD: 0 },
+            evening: { s1: '', d1: '', s2: '', d2: '', avgS: 0, avgD: 0 }, notes: ''
+        }));
+
+        window.updateStateFromCloud = (cloudData) => {
+            state = cloudData;
+            localStorage.setItem('bp_722_data', JSON.stringify(state));
+            renderTable(); // 只有在從雲端載入或初始載入時才全面渲染
+        };
+
+        function renderTable() {
+            const tbody = document.getElementById('tracker-body');
+            tbody.innerHTML = '';
+            state.forEach((day, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-50 hover:bg-slate-50/50 transition";
+                tr.innerHTML = `
+                    <td class="p-4">
+                        <span class="block text-sm font-bold text-slate-700">第 ${day.id} 天</span>
+                        <input type="date" value="${day.date}" onchange="updateData(${index}, 'date', this.value)" class="mt-1 text-xs border-none bg-transparent p-0">
+                    </td>
+                    <td class="p-4 bg-blue-50/10">
+                        <div class="flex flex-col gap-2 items-center">
+                            <div class="flex gap-1 items-center">
+                                <input type="number" placeholder="高壓" value="${day.morning.s1}" oninput="updateReading(${index}, 'morning', 's1', this.value)" class="w-14 p-1 text-center border rounded text-sm focus:ring-1 focus:ring-teal-500 outline-none">
+                                <input type="number" placeholder="低壓" value="${day.morning.d1}" oninput="updateReading(${index}, 'morning', 'd1', this.value)" class="w-14 p-1 text-center border rounded text-sm focus:ring-1 focus:ring-teal-500 outline-none">
+                            </div>
+                            <div class="flex gap-1 items-center">
+                                <input type="number" placeholder="高壓" value="${day.morning.s2}" oninput="updateReading(${index}, 'morning', 's2', this.value)" class="w-14 p-1 text-center border rounded text-sm focus:ring-1 focus:ring-teal-500 outline-none">
+                                <input type="number" placeholder="低壓" value="${day.morning.d2}" oninput="updateReading(${index}, 'morning', 'd2', this.value)" class="w-14 p-1 text-center border rounded text-sm focus:ring-1 focus:ring-teal-500 outline-none">
+                            </div>
+                            <div id="m-avg-${index}" class="text-[10px] font-bold px-3 py-1 rounded-full ${getBPClass(day.morning.avgS, day.morning.avgD)}">
+                                平均：${day.morning.avgS || '--'} / ${day.morning.avgD || '--'}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4 bg-indigo-50/10">
+                        <div class="flex flex-col gap-2 items-center">
+                            <div class="flex gap-1 items-center">
+                                <input type="number" placeholder="高壓" value="${day.evening.s1}" oninput="updateReading(${index}, 'evening', 's1', this.value)" class="w-14 p-1 text-center border rounded text-sm focus:ring-1 focus:ring-teal-500 outline-none">
+                                <input type="number" placeholder="低壓" value="${day.evening.d1}" oninput="updateReading(${index}, 'evening', 'd1', this.value)" class="w-14 p-1 text-center border rounded text-sm focus:ring-1 focus:ring-teal-500 outline-none">
+                            </div>
+                            <div class="flex gap-1 items-center">
+                                <input type="number" placeholder="高壓" value="${day.evening.s2}" oninput="updateReading(${index}, 'evening', 's2', this.value)" class="w-14 p-1 text-center border rounded text-sm focus:ring-1 focus:ring-teal-500 outline-none">
+                                <input type="number" placeholder="低壓" value="${day.evening.d2}" oninput="updateReading(${index}, 'evening', 'd2', this.value)" class="w-14 p-1 text-center border rounded text-sm focus:ring-1 focus:ring-teal-500 outline-none">
+                            </div>
+                            <div id="e-avg-${index}" class="text-[10px] font-bold px-3 py-1 rounded-full ${getBPClass(day.evening.avgS, day.evening.avgD)}">
+                                平均：${day.evening.avgS || '--'} / ${day.evening.avgD || '--'}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <input type="text" oninput="updateData(${index}, 'notes', this.value)" value="${day.notes}" class="w-full p-2 text-xs border-b border-slate-200 focus:border-teal-500 bg-transparent outline-none transition" placeholder="輸入症狀或備註...">
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateStats();
+            updateChart();
+        }
+
+        function getBPClass(s, d) {
+            if (!s || !d) return 'text-slate-400 bg-slate-100';
+            return (s >= 135 || d >= 85) ? 'high-bp' : 'normal-bp';
+        }
+
+        function updateData(index, field, value) {
+            state[index][field] = value;
+            save(); // 儲存但不重新渲染，保持輸入焦點
+        }
+
+        function updateReading(index, time, subfield, value) {
+            state[index][time][subfield] = value;
+            const t = state[index][time];
+            const s1 = parseInt(t.s1), s2 = parseInt(t.s2), d1 = parseInt(t.d1), d2 = parseInt(t.d2);
+            
+            // 計算該次平均
+            t.avgS = (s1 && s2) ? Math.round((s1 + s2) / 2) : (s1 || s2 || 0);
+            t.avgD = (d1 && d2) ? Math.round((d1 + d2) / 2) : (d1 || d2 || 0);
+            
+            // 局部更新該欄位的平均值顯示，避免重新渲染整個表格
+            const avgEl = document.getElementById(`${time === 'morning' ? 'm' : 'e'}-avg-${index}`);
+            if (avgEl) {
+                avgEl.innerText = `平均：${t.avgS || '--'} / ${t.avgD || '--'}`;
+                avgEl.className = `text-[10px] font-bold px-3 py-1 rounded-full ${getBPClass(t.avgS, t.avgD)}`;
+            }
+
+            save();
+            updateStats();
+            updateChart();
+        }
+
+        function updateStats() {
+            let sSum = 0, sCnt = 0, dSum = 0, dCnt = 0;
+            state.forEach(d => {
+                [d.morning, d.evening].forEach(v => {
+                    if(v.avgS){ sSum+=v.avgS; sCnt++; }
+                    if(v.avgD){ dSum+=v.avgD; dCnt++; }
+                });
+            });
+            const avgS = sCnt ? Math.round(sSum/sCnt) : 0;
+            const avgD = dCnt ? Math.round(dSum/dCnt) : 0;
+            document.getElementById('avg-sys').innerText = avgS || '--';
+            document.getElementById('avg-dia').innerText = avgD || '--';
+            const status = document.getElementById('health-status');
+            if(!avgS) { status.innerText = '等待輸入資料'; status.className = 'text-slate-400 font-bold'; }
+            else if(avgS >= 135 || avgD >= 85) { status.innerText = '偏高，請儘速就醫諮詢'; status.className = 'text-red-600 font-bold text-sm'; }
+            else { status.innerText = '正常，請繼續保持'; status.className = 'text-teal-600 font-bold text-sm'; }
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            const sysData_M = state.map(d => d.morning.avgS || null);
+            const sysData_E = state.map(d => d.evening.avgS || null);
+
+            if (chart) {
+                chart.data.datasets[0].data = sysData_M;
+                chart.data.datasets[1].data = sysData_E;
+                chart.update('none'); // 安靜更新圖表，不觸發動畫
+            } else {
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: state.map(d => d.date || `Day ${d.id}`),
+                        datasets: [
+                            { label: '早晨收縮壓', data: sysData_M, borderColor: '#3b82f6', tension: 0.3, spanGaps: true },
+                            { label: '夜晚收縮壓', data: sysData_E, borderColor: '#6366f1', tension: 0.3, spanGaps: true },
+                            { label: '居家警戒線 (135)', data: Array(DAYS).fill(135), borderColor: '#ef4444', borderDash: [5,5], pointRadius: 0 }
+                        ]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        scales: { y: { min: 60, max: 200 } },
+                        animation: false // 關閉動畫讓輸入更流暢
+                    }
+                });
+            }
+        }
+
+        function save() {
+            localStorage.setItem('bp_722_data', JSON.stringify(state));
+            if (window.saveToCloud) window.saveToCloud(state);
+        }
+
+        function copyReport() {
+            let report = "【血壓 7-2-2 居家紀錄報告】\n";
+            state.forEach(d => {
+                if(d.morning.avgS || d.evening.avgS) {
+                    const dateStr = d.date || '第'+d.id+'天';
+                    report += `${dateStr}: 早(${d.morning.avgS}/${d.morning.avgD}) 晚(${d.evening.avgS}/${d.evening.avgD}) ${d.notes}\n`;
+                }
+            });
+            const sys = document.getElementById('avg-sys').innerText;
+            const dia = document.getElementById('avg-dia').innerText;
+            report += `\n7天總平均值：${sys} / ${dia} mmHg`;
+            navigator.clipboard.writeText(report).then(() => alert("報告已複製到剪貼簿！"));
+        }
+
+        function resetData() {
+            if(confirm('確定要清空所有紀錄嗎？')){
+                state = Array.from({ length: DAYS }, (_, i) => ({ id: i + 1, date: '', morning: { s1: '', d1: '', s2: '', d2: '', avgS: 0, avgD: 0 }, evening: { s1: '', d1: '', s2: '', d2: '', avgS: 0, avgD: 0 }, notes: '' }));
+                save(); renderTable();
+            }
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>
