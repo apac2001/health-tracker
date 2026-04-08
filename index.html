@@ -19,12 +19,14 @@
   --green:#3ecf8e;--green-bg:rgba(62,207,142,0.1);--green-border:rgba(62,207,142,0.25);
   --amber:#f5a623;--amber-bg:rgba(245,166,35,0.1);--amber-border:rgba(245,166,35,0.25);
   --red:#ff5c5c;--red-bg:rgba(255,92,92,0.1);--red-border:rgba(255,92,92,0.25);
+  --purple:#a78bfa;--purple-bg:rgba(167,139,250,0.1);--purple-border:rgba(167,139,250,0.22);
   --r:14px;--rs:9px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;}
 body{padding-bottom:88px;}
 
+/* setup */
 #setup{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 20px;text-align:center;}
 .setup-logo{font-size:48px;margin-bottom:20px;}
 .setup-title{font-size:26px;font-weight:300;letter-spacing:-0.5px;margin-bottom:6px;}
@@ -51,8 +53,9 @@ body{padding-bottom:88px;}
 .setup-go.disabled{opacity:0.4;pointer-events:none;}
 .setup-go:active{opacity:0.82;}
 
+/* app */
 #app{display:none;max-width:480px;margin:0 auto;padding:0 16px;}
-.topbar{padding:18px 0 4px;display:flex;align-items:center;justify-content:space-between;}
+.topbar{padding:16px 0 4px;display:flex;align-items:center;justify-content:space-between;}
 .user-pill{display:flex;align-items:center;gap:8px;}
 .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .av-him{background:var(--blue-bg);border:1.5px solid var(--blue-border);}
@@ -63,15 +66,22 @@ body{padding-bottom:88px;}
 .dok{background:var(--green);}.derr{background:var(--red);}.dload{background:var(--amber);animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 
-.view-toggle{display:flex;gap:8px;margin:12px 0 16px;align-items:center;}
+/* streak bar */
+.streak-bar{display:flex;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin:8px 0 14px;align-items:center;}
+.streak-item{display:flex;flex-direction:column;align-items:center;flex:1;}
+.streak-num{font-size:20px;font-weight:500;font-family:'DM Mono',monospace;}
+.streak-lbl{font-size:10px;color:var(--text3);margin-top:2px;}
+.streak-div{width:1px;height:32px;background:var(--border2);}
+
+.view-toggle{display:flex;gap:8px;margin:4px 0 14px;align-items:center;}
 .vt-label{font-size:12px;color:var(--text3);white-space:nowrap;}
 .vt-tabs{display:flex;gap:4px;flex:1;}
 .vt-tab{flex:1;padding:8px;border:1px solid var(--border2);border-radius:999px;background:transparent;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text2);transition:all 0.18s;text-align:center;}
 .vt-him.active{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue);}
 .vt-her.active{background:var(--pink-bg);border-color:var(--pink-border);color:var(--pink);}
 
-.tabs{display:flex;gap:3px;padding:4px;background:var(--bg2);border-radius:var(--rs);margin-bottom:18px;border:1px solid var(--border);}
-.tab{flex:1;padding:9px 2px;border:none;background:transparent;color:var(--text2);font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;border-radius:6px;cursor:pointer;transition:all 0.18s;}
+.tabs{display:flex;gap:2px;padding:4px;background:var(--bg2);border-radius:var(--rs);margin-bottom:16px;border:1px solid var(--border);overflow-x:auto;}
+.tab{flex:1;min-width:44px;padding:8px 2px;border:none;background:transparent;color:var(--text2);font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;border-radius:6px;cursor:pointer;transition:all 0.18s;white-space:nowrap;}
 .tab.active{background:var(--bg4);color:var(--text);}
 .sec{display:none;}.sec.active{display:block;}
 
@@ -82,6 +92,9 @@ body{padding-bottom:88px;}
 .view-banner.him-banner{background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue);}
 .view-banner.her-banner{background:var(--pink-bg);border:1px solid var(--pink-border);color:var(--pink);}
 
+/* alert banner */
+.alert-banner{padding:12px 14px;border-radius:var(--rs);margin-bottom:12px;font-size:13px;border:1px solid var(--red-border);background:var(--red-bg);color:var(--red);display:flex;align-items:center;gap:8px;}
+
 .period-toggle{display:flex;gap:6px;}
 .ptab{padding:5px 14px;border:1px solid var(--border2);border-radius:999px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.15s;background:transparent;color:var(--text2);}
 .ptab.am.active{background:var(--amber-bg);border-color:var(--amber-border);color:var(--amber);}
@@ -89,10 +102,11 @@ body{padding-bottom:88px;}
 .ptab.pm.active-her{background:var(--pink-bg);border-color:var(--pink-border);color:var(--pink);}
 
 .frow{display:flex;gap:10px;margin-bottom:10px;}
-.f{flex:1;}.f.narrow{max-width:82px;}
+.f{flex:1;}.f.narrow{max-width:82px;}.f.w80{max-width:80px;}
 .f label{display:block;font-size:11px;color:var(--text3);margin-bottom:5px;letter-spacing:0.04em;}
-.f input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:16px;font-family:'DM Mono',monospace;transition:border 0.15s;}
-.f input:focus{outline:none;}
+.f input,.f select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:15px;font-family:'DM Mono',monospace;transition:border 0.15s;}
+.f select{font-family:'DM Sans',sans-serif;font-size:14px;}
+.f input:focus,.f select:focus{outline:none;}
 .f input.focus-him:focus{border-color:var(--blue);}
 .f input.focus-her:focus{border-color:var(--pink);}
 .f input::placeholder{color:var(--text3);font-size:14px;}
@@ -103,25 +117,26 @@ body{padding-bottom:88px;}
 .btn-outline{background:transparent;color:var(--text2);}
 .btn-green{background:var(--green-bg);border-color:var(--green-border);color:var(--green);}
 .btn-danger{background:var(--red-bg);border-color:var(--red-border);color:var(--red);}
+.btn-amber{background:var(--amber-bg);border-color:var(--amber-border);color:var(--amber);}
+.btn-purple{background:var(--purple-bg);border-color:var(--purple-border);color:var(--purple);}
 .btn-sm{width:auto;padding:9px 16px;margin-top:0;font-size:13px;}
 .btn:disabled{opacity:0.45;cursor:not-allowed;}
+.btn:active{opacity:0.8;}
 
+/* water */
 .water-big{text-align:center;padding:8px 0 14px;}
 .w-num{font-size:44px;font-weight:300;font-family:'DM Mono',monospace;line-height:1;}
-.w-num.him-col{color:var(--blue);}
-.w-num.her-col{color:var(--pink);}
+.w-num.him-col{color:var(--blue);}.w-num.her-col{color:var(--pink);}
 .w-sub{font-size:13px;color:var(--text3);margin-top:4px;}
 .prog-wrap{height:6px;background:var(--bg4);border-radius:999px;overflow:hidden;margin:12px 0;}
 .prog-fill{height:100%;border-radius:999px;transition:width 0.5s cubic-bezier(.4,0,.2,1);}
-.prog-him{background:var(--blue);}
-.prog-her{background:var(--pink);}
+.prog-him{background:var(--blue);}.prog-her{background:var(--pink);}
 .w-stat{font-size:13px;color:var(--text2);text-align:center;}
 
-/* 容器快速按鈕 */
 .container-btns{display:flex;gap:8px;margin:12px 0 8px;flex-wrap:wrap;}
 .container-btn{flex:1;min-width:80px;padding:14px 8px;border:1px solid var(--border2);border-radius:var(--r);background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:4px;}
 .container-btn:active{transform:scale(0.96);}
-.container-btn .c-icon{font-size:24px;}
+.container-btn .c-icon{font-size:22px;}
 .container-btn .c-name{font-size:11px;color:var(--text3);}
 .container-btn .c-ml{font-size:14px;font-weight:500;font-family:'DM Mono',monospace;}
 .container-btn.him-c{border-color:var(--blue-border);background:var(--blue-bg);}
@@ -129,12 +144,39 @@ body{padding-bottom:88px;}
 .container-btn.her-c{border-color:var(--pink-border);background:var(--pink-bg);}
 .container-btn.her-c .c-ml{color:var(--pink);}
 
-/* 容器編輯 */
-.container-editor{margin-top:12px;}
-.container-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:8px;}
-.container-row .f{flex:1;}
-.container-row .f-icon{width:60px;flex:none;}
+/* BMI */
+.bmi-display{display:flex;align-items:baseline;gap:8px;margin:8px 0 4px;}
+.bmi-num{font-size:36px;font-weight:300;font-family:'DM Mono',monospace;}
+.bmi-label{font-size:13px;padding:3px 10px;border-radius:999px;font-weight:500;}
+.bmi-normal{background:var(--green-bg);color:var(--green);}
+.bmi-under{background:var(--blue-bg);color:var(--blue);}
+.bmi-over{background:var(--amber-bg);color:var(--amber);}
+.bmi-obese{background:var(--red-bg);color:var(--red);}
+.weight-trend{display:flex;gap:6px;margin-top:10px;overflow-x:auto;padding-bottom:4px;}
+.wt-dot{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:40px;}
+.wt-dot-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'DM Mono',monospace;font-weight:500;border:1.5px solid var(--border2);}
+.wt-dot-date{font-size:10px;color:var(--text3);}
 
+/* sleep */
+.sleep-quality{display:flex;gap:8px;margin:10px 0;}
+.sq-btn{flex:1;padding:10px 4px;border:1px solid var(--border2);border-radius:var(--rs);background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:20px;text-align:center;transition:all 0.18s;}
+.sq-btn.active{border-width:2px;}
+.sq-btn.active.q1{border-color:var(--red);background:var(--red-bg);}
+.sq-btn.active.q2{border-color:var(--amber);background:var(--amber-bg);}
+.sq-btn.active.q3{border-color:var(--green);background:var(--green-bg);}
+.sq-btn.active.q4{border-color:var(--blue);background:var(--blue-bg);}
+.sq-lbl{font-size:10px;color:var(--text3);display:block;margin-top:3px;}
+
+/* medication */
+.med-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.med-item:last-child{border-bottom:none;}
+.med-left{flex:1;}
+.med-name{font-size:14px;font-weight:500;}
+.med-time{font-size:12px;color:var(--text3);margin-top:2px;font-family:'DM Mono',monospace;}
+.med-taken{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.18s;}
+.med-taken.done{background:var(--green-bg);border-color:var(--green-border);}
+
+/* records */
 .ri{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);}
 .ri:last-child{border-bottom:none;}
 .rtime{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:3px;}
@@ -149,17 +191,15 @@ body{padding-bottom:88px;}
 
 .srow{display:flex;gap:8px;margin-bottom:14px;}
 .sc{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:12px;}
-.sc.him-sc{border-color:var(--blue-border);}
-.sc.her-sc{border-color:var(--pink-border);}
+.sc.him-sc{border-color:var(--blue-border);}.sc.her-sc{border-color:var(--pink-border);}
 .slb{font-size:11px;color:var(--text3);letter-spacing:0.03em;}
 .sv{font-size:22px;font-weight:400;font-family:'DM Mono',monospace;margin-top:2px;}
 
-/* 喝水歷史 */
 .water-hist-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:12px;}
 .water-hist-row:last-child{border-bottom:none;}
 .whd{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;width:80px;flex-shrink:0;}
 .whbar-wrap{flex:1;height:6px;background:var(--bg4);border-radius:999px;overflow:hidden;}
-.whbar{height:100%;border-radius:999px;transition:width 0.4s;}
+.whbar{height:100%;border-radius:999px;}
 .wh-ml{font-size:13px;font-weight:500;font-family:'DM Mono',monospace;width:60px;text-align:right;flex-shrink:0;}
 .wh-pct{font-size:11px;color:var(--text3);width:36px;text-align:right;flex-shrink:0;}
 
@@ -168,30 +208,28 @@ body{padding-bottom:88px;}
 .partner-card.her-card{background:var(--pink-bg);border:1px solid var(--pink-border);}
 .partner-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .partner-name{font-size:13px;font-weight:500;}
-.partner-name.him-col{color:var(--blue);}
-.partner-name.her-col{color:var(--pink);}
-.partner-stats{display:flex;gap:12px;flex-wrap:wrap;}
+.partner-name.him-col{color:var(--blue);}.partner-name.her-col{color:var(--pink);}
+.partner-stats{display:flex;gap:10px;flex-wrap:wrap;}
 .pstat{text-align:center;}
 .pstat-val{font-size:18px;font-weight:500;font-family:'DM Mono',monospace;}
 .pstat-lbl{font-size:10px;color:var(--text3);margin-top:1px;}
 
-.reminder-card{background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--r);padding:16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.reminder-card.off{background:var(--bg2);border-color:var(--border);}
+.reminder-card{border-radius:var(--r);padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.reminder-card.on{background:var(--green-bg);border:1px solid var(--green-border);}
+.reminder-card.off{background:var(--bg2);border:1px solid var(--border);}
 .reminder-left{flex:1;}
-.reminder-title{font-size:14px;font-weight:500;color:var(--green);margin-bottom:2px;}
-.reminder-title.off{color:var(--text2);}
+.reminder-title{font-size:14px;font-weight:500;margin-bottom:2px;}
+.reminder-title.on{color:var(--green);}.reminder-title.off{color:var(--text2);}
 .reminder-sub{font-size:12px;color:var(--text3);}
-.toggle-wrap{display:flex;align-items:center;gap:10px;}
-.interval-select{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:6px 10px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;}
+.toggle-wrap{display:flex;align-items:center;gap:8px;}
+.interval-select{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:6px 8px;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;}
 .toggle{width:44px;height:26px;border-radius:999px;border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0;}
-.toggle.on{background:var(--green);}
-.toggle.off{background:var(--bg4);}
+.toggle.on{background:var(--green);}.toggle.off{background:var(--bg4);}
 .toggle::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;transition:left 0.2s;}
-.toggle.on::after{left:21px;}
-.toggle.off::after{left:3px;}
+.toggle.on::after{left:21px;}.toggle.off::after{left:3px;}
 
 .chart-wrap{position:relative;width:100%;height:200px;margin:8px 0 4px;}
-.chart-legend{display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:var(--text2);flex-wrap:wrap;}
+.chart-legend{display:flex;gap:14px;margin-bottom:12px;font-size:12px;color:var(--text2);flex-wrap:wrap;}
 .leg-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;}
 .chart-tabs{display:flex;gap:6px;margin-bottom:12px;}
 .chart-tab{padding:5px 12px;border:1px solid var(--border2);border-radius:999px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--text2);transition:all 0.15s;}
@@ -203,15 +241,16 @@ body{padding-bottom:88px;}
 </head>
 <body>
 
+<!-- SETUP -->
 <div id="setup">
   <div class="setup-logo">👨‍👩‍</div>
   <div class="setup-title">家庭健康日誌</div>
-  <div class="setup-sub">夫妻共同記錄，互相關心監督<br>血壓・心跳・喝水</div>
+  <div class="setup-sub">夫妻共同記錄，互相關心監督</div>
   <div class="setup-card">
     <div class="step-list">
-      <div class="step-item"><div class="sn">1</div><div>開啟 <a href="https://script.google.com" target="_blank" style="color:var(--blue);">script.google.com</a>，新建專案貼上 Code.gs</div></div>
-      <div class="step-item"><div class="sn">2</div><div>部署 → 網頁應用程式 → 存取權「任何人」</div></div>
-      <div class="step-item"><div class="sn">3</div><div>複製網址，夫妻兩人用同一個網址，各自選角色</div></div>
+      <div class="step-item"><div class="sn">1</div><div>開啟 <a href="https://script.google.com" target="_blank" style="color:var(--blue);">script.google.com</a>，貼上 Code.gs 並部署</div></div>
+      <div class="step-item"><div class="sn">2</div><div>部署類型選「網頁應用程式」，存取權「任何人」</div></div>
+      <div class="step-item"><div class="sn">3</div><div>複製網址，夫妻各自選角色即可開始使用</div></div>
     </div>
     <div class="slabel">Google Apps Script 網址</div>
     <input class="sinput" type="url" id="s-api" placeholder="https://script.google.com/macros/s/...">
@@ -224,12 +263,15 @@ body{padding-bottom:88px;}
     <input class="sinput" type="text" id="s-name" placeholder="例：爸爸、媽媽" maxlength="8">
     <div class="slabel">體重（公斤）</div>
     <input class="sinput" type="number" id="s-weight" placeholder="60" inputmode="decimal">
+    <div class="slabel">身高（公分）</div>
+    <input class="sinput" type="number" id="s-height" placeholder="170" inputmode="decimal">
     <div class="slabel">另一半的暱稱（選填）</div>
     <input class="sinput" type="text" id="s-partner-name" placeholder="例：媽媽、爸爸" maxlength="8">
     <button class="setup-go disabled" id="setup-go-btn" onclick="completeSetup()">開始使用</button>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app">
   <div class="topbar">
     <div class="user-pill">
@@ -245,10 +287,13 @@ body{padding-bottom:88px;}
     </div>
   </div>
 
+  <!-- 打卡連續天數 -->
+  <div class="streak-bar" id="streak-bar"></div>
+
   <div class="view-toggle">
     <div class="vt-label">查看：</div>
     <div class="vt-tabs">
-      <button class="vt-tab vt-him active" id="vt-me" onclick="setView('me')">我的紀錄</button>
+      <button class="vt-tab vt-him active" id="vt-me" onclick="setView('me')">我的</button>
       <button class="vt-tab" id="vt-partner" onclick="setView('partner')">另一半</button>
     </div>
   </div>
@@ -256,6 +301,9 @@ body{padding-bottom:88px;}
   <div class="tabs">
     <button class="tab active" onclick="switchTab('bp')">血壓</button>
     <button class="tab" onclick="switchTab('water')">喝水</button>
+    <button class="tab" onclick="switchTab('weight')">體重</button>
+    <button class="tab" onclick="switchTab('sleep')">睡眠</button>
+    <button class="tab" onclick="switchTab('med')">用藥</button>
     <button class="tab" onclick="switchTab('chart')">趨勢</button>
     <button class="tab" onclick="switchTab('history')">歷史</button>
     <button class="tab" onclick="switchTab('settings')">設定</button>
@@ -263,6 +311,7 @@ body{padding-bottom:88px;}
 
   <!-- 血壓 -->
   <div class="sec active" id="tab-bp">
+    <div id="alert-bp"></div>
     <div id="view-banner-bp"></div>
     <div class="card" id="bp-input-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
@@ -277,9 +326,7 @@ body{padding-bottom:88px;}
         <div class="f"><label>舒張壓</label><input class="fi" type="number" id="dia" placeholder="80" inputmode="numeric"></div>
         <div class="f narrow"><label>心跳</label><input class="fi" type="number" id="hr" placeholder="72" inputmode="numeric"></div>
       </div>
-      <div class="frow">
-        <div class="f"><label>備註</label><input class="fi" type="text" id="bp-note" placeholder="飯後、運動後…"></div>
-      </div>
+      <div class="frow"><div class="f"><label>備註</label><input class="fi" type="text" id="bp-note" placeholder="飯後、運動後…"></div></div>
       <button class="btn" id="save-bp-btn" onclick="saveBP()">儲存紀錄</button>
     </div>
     <div class="card">
@@ -301,7 +348,6 @@ body{padding-bottom:88px;}
   <div class="sec" id="tab-water">
     <div id="view-banner-w"></div>
     <div id="reminder-card-wrap"></div>
-
     <div class="card">
       <div class="card-title" id="water-card-title">今日飲水</div>
       <div class="water-big">
@@ -311,7 +357,6 @@ body{padding-bottom:88px;}
       <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
       <div class="w-stat" id="wstat"></div>
     </div>
-
     <div class="card" id="water-input-card">
       <div class="card-title">我的容器</div>
       <div class="container-btns" id="container-btns"></div>
@@ -324,10 +369,96 @@ body{padding-bottom:88px;}
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title" id="water-log-title">今日明細</div>
       <div id="water-log"></div>
+    </div>
+  </div>
+
+  <!-- 體重 -->
+  <div class="sec" id="tab-weight">
+    <div id="view-banner-wt"></div>
+    <div class="card">
+      <div class="card-title" id="weight-card-title">今日體重</div>
+      <div id="bmi-display-wrap">
+        <div class="empty">尚無體重紀錄</div>
+      </div>
+    </div>
+    <div class="card" id="weight-input-card">
+      <div class="card-title">記錄體重</div>
+      <div class="frow">
+        <div class="f"><label>體重（kg）</label><input class="fi" type="number" id="w-kg" placeholder="65.5" inputmode="decimal" step="0.1"></div>
+        <div class="f narrow"><label>時間</label><input class="fi" type="time" id="w-time"></div>
+      </div>
+      <button class="btn" id="save-wt-btn" onclick="saveWeight()">記錄體重</button>
+    </div>
+    <div class="card">
+      <div class="card-title">近期體重變化</div>
+      <div class="weight-trend" id="weight-trend"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">BMI 參考</div>
+      <div style="font-size:13px;color:var(--text2);line-height:2;">
+        <div><span style="color:var(--blue);">●</span> 過輕：BMI &lt; 18.5</div>
+        <div><span style="color:var(--green);">●</span> 正常：BMI 18.5 – 24.9</div>
+        <div><span style="color:var(--amber);">●</span> 過重：BMI 25 – 29.9</div>
+        <div><span style="color:var(--red);">●</span> 肥胖：BMI ≥ 30</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 睡眠 -->
+  <div class="sec" id="tab-sleep">
+    <div id="view-banner-sl"></div>
+    <div class="card">
+      <div class="card-title" id="sleep-today-title">今晚睡眠記錄</div>
+      <div id="sleep-today-disp"></div>
+    </div>
+    <div class="card" id="sleep-input-card">
+      <div class="card-title">新增睡眠</div>
+      <div class="frow">
+        <div class="f"><label>入睡時間</label><input class="fi" type="time" id="sl-start" value="22:30"></div>
+        <div class="f"><label>起床時間</label><input class="fi" type="time" id="sl-end" value="06:30"></div>
+      </div>
+      <div style="margin-bottom:10px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;letter-spacing:0.04em;text-transform:uppercase;">睡眠品質</div>
+        <div class="sleep-quality">
+          <button class="sq-btn q1" id="sq1" onclick="setSQ(1)">😴<span class="sq-lbl">很差</span></button>
+          <button class="sq-btn q2" id="sq2" onclick="setSQ(2)">😐<span class="sq-lbl">普通</span></button>
+          <button class="sq-btn q3" id="sq3" onclick="setSQ(3)">😊<span class="sq-lbl">不錯</span></button>
+          <button class="sq-btn q4" id="sq4" onclick="setSQ(4)">😁<span class="sq-lbl">很好</span></button>
+        </div>
+      </div>
+      <div class="frow"><div class="f"><label>備註（選填）</label><input class="fi" type="text" id="sl-note" placeholder="多夢、睡前喝咖啡…"></div></div>
+      <button class="btn" id="save-sl-btn" onclick="saveSleep()">儲存睡眠</button>
+    </div>
+    <div class="card">
+      <div class="card-title">近7天睡眠</div>
+      <div id="sleep-hist"></div>
+    </div>
+  </div>
+
+  <!-- 用藥 -->
+  <div class="sec" id="tab-med">
+    <div class="card">
+      <div class="card-title">今日用藥</div>
+      <div id="med-today"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">新增藥物</div>
+      <div class="frow">
+        <div class="f"><label>藥物名稱</label><input class="fi" type="text" id="med-name" placeholder="例：降血壓藥"></div>
+        <div class="f w80"><label>服藥時間</label><input class="fi" type="time" id="med-time" value="08:00"></div>
+      </div>
+      <div class="frow">
+        <div class="f"><label>劑量（選填）</label><input class="fi" type="text" id="med-dose" placeholder="例：1顆、5mg"></div>
+        <div class="f"><label>備註（選填）</label><input class="fi" type="text" id="med-note" placeholder="飯後服用"></div>
+      </div>
+      <button class="btn btn-amber" onclick="addMed()">新增藥物</button>
+    </div>
+    <div class="card">
+      <div class="card-title">我的藥物清單</div>
+      <div id="med-list"></div>
     </div>
   </div>
 
@@ -352,24 +483,28 @@ body{padding-bottom:88px;}
         <button class="chart-tab active" id="wt-me" onclick="setWaterChartView('me')">我的</button>
         <button class="chart-tab" id="wt-partner" onclick="setWaterChartView('partner')">另一半</button>
       </div>
-      <div class="chart-wrap" style="height:150px;"><canvas id="water-chart"></canvas></div>
+      <div class="chart-wrap" style="height:140px;"><canvas id="water-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">體重趨勢（近14天）</div>
+      <div class="chart-tabs">
+        <button class="chart-tab active" id="wgt-me" onclick="setWeightChartView('me')">我的</button>
+        <button class="chart-tab" id="wgt-partner" onclick="setWeightChartView('partner')">另一半</button>
+      </div>
+      <div class="chart-wrap" style="height:160px;"><canvas id="weight-chart"></canvas></div>
     </div>
   </div>
 
   <!-- 歷史 -->
   <div class="sec" id="tab-history">
     <div id="partner-summary"></div>
-
-    <!-- 血壓歷史 -->
     <div class="srow" id="avg-stats"></div>
     <div class="card">
       <div class="card-title" id="hist-title">血壓歷史</div>
       <div id="hist-list"></div>
     </div>
-
-    <!-- 喝水歷史 -->
-    <div class="card" style="margin-top:4px;">
-      <div class="card-title" id="water-hist-title">近14天喝水紀錄</div>
+    <div class="card">
+      <div class="card-title" id="water-hist-title">近14天喝水</div>
       <div id="water-hist-list"></div>
     </div>
   </div>
@@ -378,24 +513,22 @@ body{padding-bottom:88px;}
   <div class="sec" id="tab-settings">
     <div class="card">
       <div class="card-title">個人設定</div>
-      <div class="frow" style="margin-bottom:6px;">
+      <div class="frow">
         <div class="f"><label>我的暱稱</label><input class="fi" type="text" id="set-name" maxlength="8"></div>
         <div class="f"><label>另一半暱稱</label><input class="fi" type="text" id="set-partner" maxlength="8"></div>
       </div>
-      <div class="frow" style="margin-bottom:6px;">
-        <div class="f"><label>我的體重（kg）</label><input class="fi" type="number" id="set-weight" inputmode="decimal"></div>
+      <div class="frow">
+        <div class="f"><label>體重（kg）</label><input class="fi" type="number" id="set-weight" inputmode="decimal"></div>
+        <div class="f"><label>身高（cm）</label><input class="fi" type="number" id="set-height" inputmode="decimal"></div>
       </div>
       <button class="btn btn-green" onclick="saveSettings()">儲存設定</button>
     </div>
-
-    <!-- 容器設定 -->
     <div class="card">
       <div class="card-title">我的容器設定</div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:12px;">最多3個常用容器，點圖示可以換</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px;">最多3個常用容器</div>
       <div id="container-editor"></div>
-      <button class="btn btn-outline" style="border:1px solid var(--border2);margin-top:8px;" onclick="saveContainers()">儲存容器設定</button>
+      <button class="btn btn-outline" style="border:1px solid var(--border2);margin-top:8px;" onclick="saveContainers()">儲存容器</button>
     </div>
-
     <div class="card">
       <div class="card-title">API 設定</div>
       <div class="f" style="margin-bottom:12px;"><label>Google Apps Script 網址</label><input class="fi" type="url" id="set-api"></div>
@@ -412,95 +545,327 @@ body{padding-bottom:88px;}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const DEFAULT = { bpRecords:[], waterRecords:[], weight:0, selTime:'morning' };
-const DEFAULT_CONTAINERS = [
-  {icon:'🥛', name:'早餐杯', ml:250},
-  {icon:'🍶', name:'水壺', ml:500},
-  {icon:'🧴', name:'大瓶', ml:750}
-];
-let myData = {...DEFAULT};
-let partnerData = {...DEFAULT};
-let myRole='', myName='', partnerName='', apiUrl='', viewMode='me', selectedRole='';
-let bpChartView='me', waterChartView='me';
-let bpChartInst=null, waterChartInst=null;
-let reminderInterval=null, reminderEnabled=false, reminderHours=1;
-let myContainers = JSON.parse(JSON.stringify(DEFAULT_CONTAINERS));
+const DEFAULT={bpRecords:[],waterRecords:[],weightRecords:[],sleepRecords:[],medications:[],medTaken:{},weight:0,height:0,selTime:'morning'};
+const DEFAULT_CONTAINERS=[{icon:'🥛',name:'早餐杯',ml:250},{icon:'🫗',name:'水壺',ml:500},{icon:'🧴',name:'大瓶',ml:750}];
 
-function ls(k,v){ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,String(v)); }
-function todayStr(){ return new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}); }
-function timeStr(){ return new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}); }
-function toast(m){ const el=document.getElementById('toast'); el.textContent=m; el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2400); }
-function setSyncStatus(s,m){ document.getElementById('sdot').className='sdot '+(s==='ok'?'dok':s==='err'?'derr':'dload'); document.getElementById('smsg').textContent=m; }
+let myData={...DEFAULT},partnerData={...DEFAULT};
+let myRole='',myName='',partnerName='',apiUrl='',viewMode='me',selectedRole='';
+let bpChartView='me',waterChartView='me',weightChartView='me';
+let bpChartInst=null,waterChartInst=null,weightChartInst=null;
+let reminderInterval=null,reminderEnabled=false,reminderHours=1;
+let myContainers=JSON.parse(JSON.stringify(DEFAULT_CONTAINERS));
+let sleepQuality=3;
+let medTimers=[];
 
-// ===== 容器 =====
-function renderContainerBtns(){
-  const wrap = document.getElementById('container-btns');
-  if(!wrap) return;
-  const cls = myRole==='him'?'him-c':'her-c';
-  wrap.innerHTML = myContainers.map((c,i)=>`
-    <button class="container-btn ${cls}" onclick="addContainerWater(${i})">
-      <span class="c-icon">${c.icon}</span>
-      <span class="c-name">${c.name}</span>
-      <span class="c-ml">${c.ml}mL</span>
-    </button>`).join('');
+function ls(k,v){if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,String(v));}
+function todayStr(){return new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'});}
+function timeStr(){return new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});}
+function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2400);}
+function setSyncStatus(s,m){document.getElementById('sdot').className='sdot '+(s==='ok'?'dok':s==='err'?'derr':'dload');document.getElementById('smsg').textContent=m;}
+
+function notify(title,body){
+  if('Notification' in window&&Notification.permission==='granted') new Notification(title,{body});
+  else toast(title+' '+body);
+}
+function reqNotif(){if('Notification' in window&&Notification.permission==='default') Notification.requestPermission();}
+
+// ===== 打卡連續天數 =====
+function calcStreak(records,getDate){
+  if(!records||!records.length) return 0;
+  const dates=[...new Set(records.map(getDate))].sort().reverse();
+  let streak=0,cur=new Date();
+  cur.setHours(0,0,0,0);
+  for(const d of dates){
+    const parts=d.match(/(\d+)\/(\d+)\/(\d+)/);
+    if(!parts) continue;
+    const rd=new Date(parts[1],parts[2]-1,parts[3]);
+    rd.setHours(0,0,0,0);
+    const diff=Math.round((cur-rd)/(1000*60*60*24));
+    if(diff===0||diff===streak) streak++;
+    else if(diff===streak+1) streak++;
+    else break;
+    cur=rd;
+  }
+  return streak;
 }
 
-function renderContainerEditor(){
-  const el = document.getElementById('container-editor');
-  if(!el) return;
-  const icons = ['🥛','🍶','🧴','🫗','🥤','🍵','☕','🧃','🫖','💧'];
-  el.innerHTML = myContainers.map((c,i)=>`
-    <div class="container-row" style="margin-bottom:10px;">
-      <div class="f f-icon">
-        <label>圖示</label>
-        <select class="fi" id="c-icon-${i}" style="font-size:20px;padding:8px 4px;text-align:center;">
-          ${icons.map(ic=>`<option value="${ic}" ${ic===c.icon?'selected':''}>${ic}</option>`).join('')}
-        </select>
+function renderStreak(){
+  const bpStreak=calcStreak(myData.bpRecords,r=>r.date);
+  const wStreak=calcStreak(myData.waterRecords,r=>r.date);
+  const slStreak=calcStreak(myData.sleepRecords,r=>r.date);
+  const col=myRole==='him'?'var(--blue)':'var(--pink)';
+  document.getElementById('streak-bar').innerHTML=`
+    <div class="streak-item"><div class="streak-num" style="color:${col};">${bpStreak}</div><div class="streak-lbl">血壓連續天</div></div>
+    <div class="streak-div"></div>
+    <div class="streak-item"><div class="streak-num" style="color:${col};">${wStreak}</div><div class="streak-lbl">喝水連續天</div></div>
+    <div class="streak-div"></div>
+    <div class="streak-item"><div class="streak-num" style="color:${col};">${slStreak}</div><div class="streak-lbl">睡眠連續天</div></div>`;
+}
+
+// ===== 異常偵測 =====
+function checkBPAlert(s,d,h){
+  const alerts=[];
+  if(s>=140||d>=90) alerts.push('⚠️ 血壓偏高（'+s+'/'+d+' mmHg），請注意休息');
+  if(s>=160||d>=100) alerts.push('🚨 血壓過高，建議立即就醫');
+  if(h>100) alerts.push('⚠️ 心跳偏快（'+h+' bpm）');
+  if(h<50) alerts.push('⚠️ 心跳偏慢（'+h+' bpm）');
+  return alerts;
+}
+
+function renderBPAlerts(){
+  const today=(myData.bpRecords||[]).filter(r=>r.date===todayStr());
+  const el=document.getElementById('alert-bp');
+  if(!today.length){el.innerHTML='';return;}
+  const last=today[0];
+  const alerts=checkBPAlert(last.systolic,last.diastolic,last.heartrate);
+  if(!alerts.length){el.innerHTML='';return;}
+  el.innerHTML=alerts.map(a=>`<div class="alert-banner">${a}</div>`).join('');
+}
+
+// ===== 體重 / BMI =====
+function calcBMI(kg,cm){
+  if(!kg||!cm) return null;
+  const h=cm/100;
+  return Math.round(kg/(h*h)*10)/10;
+}
+function bmiLabel(bmi){
+  if(!bmi) return {text:'未知',cls:'bmi-normal'};
+  if(bmi<18.5) return {text:'過輕',cls:'bmi-under'};
+  if(bmi<25) return {text:'正常',cls:'bmi-normal'};
+  if(bmi<30) return {text:'過重',cls:'bmi-over'};
+  return {text:'肥胖',cls:'bmi-obese'};
+}
+
+function renderWeight(){
+  const data=activeData();
+  const pr=isViewing()?(myRole==='him'?'her':'him'):myRole;
+  document.getElementById('view-banner-wt').innerHTML=viewBanner('體重紀錄');
+  document.getElementById('weight-input-card').style.display=isViewing()?'none':'block';
+  document.getElementById('weight-card-title').textContent=isViewing()?partnerName+'的體重':'今日體重';
+  const recs=(data.weightRecords||[]);
+  const today=recs.filter(r=>r.date===todayStr());
+  const wrap=document.getElementById('bmi-display-wrap');
+  const h=data.height||myData.height||0;
+  if(!today.length){wrap.innerHTML='<div class="empty">今日尚未記錄體重</div>';}
+  else{
+    const kg=today[0].kg;
+    const bmi=calcBMI(kg,h);
+    const lb=bmiLabel(bmi);
+    const col=pr==='him'?'var(--blue)':'var(--pink)';
+    wrap.innerHTML=`<div class="bmi-display">
+      <span class="bmi-num" style="color:${col};">${kg}</span>
+      <span style="font-size:14px;color:var(--text3);">kg</span>
+      ${bmi?`<span class="bmi-label ${lb.cls}">BMI ${bmi} ${lb.text}</span>`:''}
+    </div>`;
+  }
+  const trend=document.getElementById('weight-trend');
+  const last7=getLast7Days();
+  const col=pr==='him'?'var(--blue)':'var(--pink)';
+  trend.innerHTML=last7.map(date=>{
+    const r=recs.filter(x=>x.date===date);
+    const kg=r.length?r[0].kg:null;
+    const label=date.replace(/\d{4}\/(\d{2})\/(\d{2})/,'$1/$2');
+    return `<div class="wt-dot">
+      <div class="wt-dot-circle" style="${kg?'border-color:'+col+';color:'+col+';':''}">${kg||'—'}</div>
+      <div class="wt-dot-date">${label}</div>
+    </div>`;
+  }).join('');
+  if(!isViewing()){
+    const now=new Date();
+    document.getElementById('w-time').value=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  }
+}
+
+async function saveWeight(){
+  const kg=parseFloat(document.getElementById('w-kg').value);
+  const t=document.getElementById('w-time').value||timeStr();
+  if(!kg||kg<20||kg>300){toast('請輸入合理體重');return;}
+  const btn=document.getElementById('save-wt-btn');
+  btn.textContent='儲存中…';btn.disabled=true;
+  (myData.weightRecords=myData.weightRecords||[]).unshift({date:todayStr(),time:t,kg});
+  myData.weight=kg;
+  await pushMy();
+  document.getElementById('w-kg').value='';
+  btn.textContent='記錄體重';btn.disabled=false;
+  renderWeight();toast('體重已記錄 ✓');
+}
+
+// ===== 睡眠 =====
+function setSQ(q){
+  sleepQuality=q;
+  [1,2,3,4].forEach(i=>{
+    const el=document.getElementById('sq'+i);
+    el.classList.toggle('active',i===q);
+  });
+}
+
+function sleepDuration(start,end){
+  const [sh,sm]=start.split(':').map(Number);
+  let [eh,em]=end.split(':').map(Number);
+  let mins=(eh*60+em)-(sh*60+sm);
+  if(mins<0) mins+=24*60;
+  const h=Math.floor(mins/60),m=mins%60;
+  return {h,m,text:h+'小時'+(m?m+'分':'')};
+}
+
+function sqEmoji(q){return ['😴','😐','😊','😁'][q-1]||'😐';}
+
+function renderSleep(){
+  const data=activeData();
+  document.getElementById('view-banner-sl').innerHTML=viewBanner('睡眠紀錄');
+  document.getElementById('sleep-input-card').style.display=isViewing()?'none':'block';
+  document.getElementById('sleep-today-title').textContent=isViewing()?partnerName+'的睡眠':'昨晚 / 今日睡眠';
+  const recs=(data.sleepRecords||[]);
+  const today=recs.filter(r=>r.date===todayStr());
+  const el=document.getElementById('sleep-today-disp');
+  if(!today.length){el.innerHTML='<div class="empty">今日尚無睡眠紀錄</div>';}
+  else{
+    const r=today[0];
+    const dur=sleepDuration(r.start,r.end);
+    const col=dur.h>=7?'var(--green)':dur.h>=6?'var(--amber)':'var(--red)';
+    el.innerHTML=`<div style="display:flex;align-items:center;gap:16px;padding:8px 0;">
+      <div style="font-size:40px;">${sqEmoji(r.quality)}</div>
+      <div>
+        <div style="font-size:24px;font-weight:300;font-family:'DM Mono',monospace;color:${col};">${dur.text}</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:3px;">${r.start} – ${r.end}${r.note?' · '+r.note:''}</div>
       </div>
-      <div class="f">
-        <label>名稱</label>
-        <input class="fi" type="text" id="c-name-${i}" value="${c.name}" maxlength="6">
-      </div>
-      <div class="f narrow">
-        <label>mL</label>
-        <input class="fi" type="number" id="c-ml-${i}" value="${c.ml}" inputmode="numeric">
-      </div>
-    </div>`).join('');
+    </div>`;
+  }
+  const hist=document.getElementById('sleep-hist');
+  const last7=getLast7Days();
+  const rows=last7.map(date=>{
+    const r=(data.sleepRecords||[]).find(x=>x.date===date);
+    if(!r) return null;
+    const dur=sleepDuration(r.start,r.end);
+    const col=dur.h>=7?'var(--green)':dur.h>=6?'var(--amber)':'var(--red)';
+    const label=date.replace(/\d{4}\/(\d{2})\/(\d{2})/,'$1/$2');
+    return `<div class="ri">
+      <div><div class="rtime">${label} ${r.start}–${r.end}</div>
+      <div class="rval" style="color:${col};">${dur.text} <span style="color:var(--text3);font-size:13px;">${sqEmoji(r.quality)}</span></div></div>
+      ${!isViewing()?`<button class="del-btn" onclick="delSleep('${date}')">✕</button>`:''}
+    </div>`;
+  }).filter(Boolean);
+  hist.innerHTML=rows.length?rows.join(''):'<div class="empty">尚無睡眠紀錄</div>';
 }
 
-function saveContainers(){
-  myContainers = myContainers.map((_,i)=>({
-    icon: document.getElementById('c-icon-'+i)?.value || DEFAULT_CONTAINERS[i].icon,
-    name: document.getElementById('c-name-'+i)?.value.trim() || DEFAULT_CONTAINERS[i].name,
-    ml: parseInt(document.getElementById('c-ml-'+i)?.value) || DEFAULT_CONTAINERS[i].ml
-  }));
-  ls('ht_containers', JSON.stringify(myContainers));
-  renderContainerBtns();
-  toast('容器設定已儲存 ✓');
+async function saveSleep(){
+  const start=document.getElementById('sl-start').value;
+  const end=document.getElementById('sl-end').value;
+  const note=document.getElementById('sl-note').value.trim();
+  if(!start||!end){toast('請填寫入睡和起床時間');return;}
+  const btn=document.getElementById('save-sl-btn');
+  btn.textContent='儲存中…';btn.disabled=true;
+  const existing=(myData.sleepRecords||[]).findIndex(r=>r.date===todayStr());
+  const rec={date:todayStr(),start,end,quality:sleepQuality,note};
+  if(existing>-1) myData.sleepRecords[existing]=rec;
+  else (myData.sleepRecords=myData.sleepRecords||[]).unshift(rec);
+  await pushMy();
+  document.getElementById('sl-note').value='';
+  btn.textContent='儲存睡眠';btn.disabled=false;
+  renderSleep();toast('睡眠已記錄 ✓');
 }
 
-async function addContainerWater(idx){
-  const c = myContainers[idx];
-  (myData.waterRecords=myData.waterRecords||[]).push({date:todayStr(),time:timeStr(),amount:c.ml,container:c.name});
-  await pushMy(); renderWater();
-  toast('💧 '+c.name+' '+c.ml+'mL 已記錄');
+async function delSleep(date){
+  myData.sleepRecords=(myData.sleepRecords||[]).filter(r=>r.date!==date);
+  await pushMy();renderSleep();toast('已刪除');
 }
 
-// ===== 提醒 =====
+// ===== 用藥 =====
+function renderMed(){
+  const meds=myData.medications||[];
+  const today=todayStr();
+  const taken=myData.medTaken||{};
+  const todayTaken=taken[today]||{};
+  const el=document.getElementById('med-today');
+  if(!meds.length){el.innerHTML='<div class="empty">尚未設定藥物</div>';}
+  else{
+    el.innerHTML=meds.map((m,i)=>{
+      const isDone=todayTaken[i];
+      return `<div class="med-item">
+        <div class="med-left">
+          <div class="med-name">💊 ${m.name}${m.dose?' · '+m.dose:''}</div>
+          <div class="med-time">${m.time}${m.note?' · '+m.note:''}</div>
+        </div>
+        <button class="med-taken ${isDone?'done':''}" onclick="toggleMedTaken(${i})">${isDone?'✓':''}</button>
+      </div>`;
+    }).join('');
+  }
+  const listEl=document.getElementById('med-list');
+  if(!meds.length){listEl.innerHTML='<div class="empty">尚無藥物</div>';}
+  else{
+    listEl.innerHTML=meds.map((m,i)=>`
+      <div class="ri">
+        <div><div class="rval" style="font-size:14px;">💊 ${m.name}</div>
+        <div class="rtime">${m.time}${m.dose?' · '+m.dose:''}${m.note?' · '+m.note:''}</div></div>
+        <button class="del-btn" onclick="delMed(${i})">✕</button>
+      </div>`).join('');
+  }
+}
+
+async function addMed(){
+  const name=document.getElementById('med-name').value.trim();
+  const time=document.getElementById('med-time').value;
+  const dose=document.getElementById('med-dose').value.trim();
+  const note=document.getElementById('med-note').value.trim();
+  if(!name){toast('請輸入藥物名稱');return;}
+  (myData.medications=myData.medications||[]).push({name,time,dose,note});
+  await pushMy();
+  ['med-name','med-dose','med-note'].forEach(id=>document.getElementById(id).value='');
+  renderMed();
+  setupMedReminders();
+  toast('藥物已新增，將於 '+time+' 提醒 ✓');
+}
+
+async function delMed(i){
+  myData.medications.splice(i,1);
+  await pushMy();renderMed();setupMedReminders();toast('已刪除');
+}
+
+async function toggleMedTaken(i){
+  const today=todayStr();
+  if(!myData.medTaken) myData.medTaken={};
+  if(!myData.medTaken[today]) myData.medTaken[today]={};
+  myData.medTaken[today][i]=!myData.medTaken[today][i];
+  const m=myData.medications[i];
+  if(myData.medTaken[today][i]) toast('✅ '+m.name+' 已服用');
+  await pushMy();renderMed();
+}
+
+function setupMedReminders(){
+  medTimers.forEach(t=>clearTimeout(t));
+  medTimers=[];
+  reqNotif();
+  (myData.medications||[]).forEach((m,i)=>{
+    if(!m.time) return;
+    const [h,min]=m.time.split(':').map(Number);
+    const now=new Date();
+    const target=new Date();
+    target.setHours(h,min,0,0);
+    if(target<=now) return;
+    const ms=target-now;
+    const t=setTimeout(()=>{
+      const taken=(myData.medTaken||{})[todayStr()]||{};
+      if(!taken[i]) notify('💊 用藥提醒',m.name+(m.dose?' '+m.dose:'')+'，記得服用！');
+    },ms);
+    medTimers.push(t);
+  });
+}
+
+// ===== 喝水提醒 =====
 function setupReminder(){
-  reminderEnabled = ls('ht_reminder')==='1';
-  reminderHours = parseFloat(ls('ht_reminder_h')||'1');
+  reminderEnabled=ls('ht_reminder')==='1';
+  reminderHours=parseFloat(ls('ht_reminder_h')||'1');
   renderReminderCard();
   if(reminderEnabled) startReminder();
 }
 
 function renderReminderCard(){
-  const wrap = document.getElementById('reminder-card-wrap');
+  const wrap=document.getElementById('reminder-card-wrap');
   if(!wrap) return;
-  const on = reminderEnabled;
-  wrap.innerHTML = `<div class="reminder-card ${on?'':'off'}">
+  const on=reminderEnabled;
+  wrap.innerHTML=`<div class="reminder-card ${on?'on':'off'}">
     <div class="reminder-left">
-      <div class="reminder-title ${on?'':'off'}">💧 喝水提醒${on?' 開啟中':' 已關閉'}</div>
+      <div class="reminder-title ${on?'on':'off'}">💧 喝水提醒${on?' 開啟中':' 已關閉'}</div>
       <div class="reminder-sub">${on?'每 '+reminderHours+' 小時提醒一次':'開啟後定時提醒喝水'}</div>
     </div>
     <div class="toggle-wrap">
@@ -516,31 +881,40 @@ function renderReminderCard(){
   </div>`;
 }
 
-function toggleReminder(){
-  reminderEnabled=!reminderEnabled;
-  ls('ht_reminder',reminderEnabled?'1':'0');
-  if(reminderEnabled){ requestNotificationPermission(); startReminder(); toast('喝水提醒已開啟 💧'); }
-  else { stopReminder(); toast('喝水提醒已關閉'); }
-  renderReminderCard();
+function toggleReminder(){reminderEnabled=!reminderEnabled;ls('ht_reminder',reminderEnabled?'1':'0');if(reminderEnabled){reqNotif();startReminder();toast('喝水提醒已開啟 💧');}else{stopReminder();toast('喝水提醒已關閉');}renderReminderCard();}
+function changeInterval(val){reminderHours=parseFloat(val);ls('ht_reminder_h',reminderHours);stopReminder();startReminder();renderReminderCard();toast('提醒間隔：'+(reminderHours<1?reminderHours*60+'分鐘':reminderHours+'小時'));}
+function startReminder(){stopReminder();reminderInterval=setInterval(sendWaterReminder,reminderHours*60*60*1000);}
+function stopReminder(){if(reminderInterval){clearInterval(reminderInterval);reminderInterval=null;}}
+function sendWaterReminder(){const total=getTotalW(myData),goal=(myData.weight||0)*40,left=Math.max(0,goal-total);notify('💧 '+myName+'，該喝水了',left>0?`還差 ${left}mL，記得喝水！`:'今日飲水目標達成！');}
+
+// ===== 容器 =====
+function renderContainerBtns(){
+  const wrap=document.getElementById('container-btns');
+  if(!wrap) return;
+  const cls=myRole==='him'?'him-c':'her-c';
+  wrap.innerHTML=myContainers.map((c,i)=>`<button class="container-btn ${cls}" onclick="addContainerWater(${i})"><span class="c-icon">${c.icon}</span><span class="c-name">${c.name}</span><span class="c-ml">${c.ml}mL</span></button>`).join('');
 }
 
-function changeInterval(val){
-  reminderHours=parseFloat(val); ls('ht_reminder_h',reminderHours);
-  stopReminder(); startReminder(); renderReminderCard();
-  toast('提醒間隔：'+(reminderHours<1?reminderHours*60+'分鐘':reminderHours+'小時'));
+function renderContainerEditor(){
+  const el=document.getElementById('container-editor');
+  if(!el) return;
+  const icons=['🥛','🫗','🧴','🥤','🍵','☕','🧃','💧','🫖','🍼'];
+  el.innerHTML=myContainers.map((c,i)=>`<div class="frow" style="margin-bottom:8px;">
+    <div class="f w80"><label>圖示</label><select class="fi" id="c-icon-${i}" style="font-size:18px;padding:8px 4px;">${icons.map(ic=>`<option value="${ic}" ${ic===c.icon?'selected':''}>${ic}</option>`).join('')}</select></div>
+    <div class="f"><label>名稱</label><input class="fi" type="text" id="c-name-${i}" value="${c.name}" maxlength="6"></div>
+    <div class="f narrow"><label>mL</label><input class="fi" type="number" id="c-ml-${i}" value="${c.ml}" inputmode="numeric"></div>
+  </div>`).join('');
 }
 
-function requestNotificationPermission(){ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }
-function startReminder(){ stopReminder(); reminderInterval=setInterval(sendWaterReminder,reminderHours*60*60*1000); }
-function stopReminder(){ if(reminderInterval){clearInterval(reminderInterval);reminderInterval=null;} }
+function saveContainers(){
+  myContainers=myContainers.map((_,i)=>({icon:document.getElementById('c-icon-'+i)?.value||DEFAULT_CONTAINERS[i].icon,name:document.getElementById('c-name-'+i)?.value.trim()||DEFAULT_CONTAINERS[i].name,ml:parseInt(document.getElementById('c-ml-'+i)?.value)||DEFAULT_CONTAINERS[i].ml}));
+  ls('ht_containers',JSON.stringify(myContainers));renderContainerBtns();toast('容器設定已儲存 ✓');
+}
 
-function sendWaterReminder(){
-  const total=getTotalW(myData), goal=(myData.weight||0)*40;
-  const left=Math.max(0,goal-total);
-  const msg=left>0?`還差 ${left}mL，記得喝水！`:'今日飲水目標達成！';
-  if('Notification' in window && Notification.permission==='granted')
-    new Notification('💧 '+myName+'，該喝水了',{body:msg});
-  else toast('💧 該喝水了！'+msg);
+async function addContainerWater(idx){
+  const c=myContainers[idx];
+  (myData.waterRecords=myData.waterRecords||[]).push({date:todayStr(),time:timeStr(),amount:c.ml,container:c.name});
+  await pushMy();renderWater();toast('💧 '+c.name+' '+c.ml+'mL 已記錄');
 }
 
 // ===== 雲端 =====
@@ -556,16 +930,16 @@ function pickRole(r){
 function completeSetup(){
   const api=document.getElementById('s-api').value.trim();
   const w=parseFloat(document.getElementById('s-weight').value);
+  const h=parseFloat(document.getElementById('s-height').value)||0;
   const name=document.getElementById('s-name').value.trim();
   const pname=document.getElementById('s-partner-name').value.trim();
   if(!api){toast('請輸入 Apps Script 網址');return;}
   if(!selectedRole){toast('請選擇你的角色');return;}
   if(!w||w<20||w>250){toast('請輸入合理體重');return;}
-  myRole=selectedRole; myName=name||(selectedRole==='him'?'先生':'太太');
+  myRole=selectedRole;myName=name||(selectedRole==='him'?'先生':'太太');
   partnerName=pname||(selectedRole==='him'?'太太':'先生');
-  apiUrl=api; myData.weight=w;
-  ls('ht_role',myRole);ls('ht_name',myName);ls('ht_pname',partnerName);
-  ls('ht_api',apiUrl);ls('ht_data',JSON.stringify(myData));
+  apiUrl=api;myData.weight=w;myData.height=h;
+  ls('ht_role',myRole);ls('ht_name',myName);ls('ht_pname',partnerName);ls('ht_api',apiUrl);ls('ht_data',JSON.stringify(myData));
   initApp();
 }
 
@@ -578,10 +952,12 @@ function initApp(){
   document.getElementById('set-name').value=myName;
   document.getElementById('set-partner').value=partnerName;
   document.getElementById('set-weight').value=myData.weight||'';
+  document.getElementById('set-height').value=myData.height||'';
   document.getElementById('set-api').value=apiUrl||'';
-  renderContainerBtns();
-  renderContainerEditor();
-  setupReminder();
+  setSQ(3);
+  renderContainerBtns();renderContainerEditor();
+  setupReminder();setupMedReminders();
+  reqNotif();
   fetchBoth();
   setInterval(fetchBoth,30000);
 }
@@ -590,6 +966,8 @@ function applyTheme(){
   document.getElementById('my-avatar').textContent=myRole==='him'?'👨':'👩';
   document.getElementById('my-avatar').className='avatar '+(myRole==='him'?'av-him':'av-her');
   document.getElementById('save-bp-btn').className='btn btn-'+(myRole==='him'?'him':'her');
+  document.getElementById('save-wt-btn').className='btn btn-'+(myRole==='him'?'him':'her');
+  document.getElementById('save-sl-btn').className='btn btn-'+(myRole==='him'?'him':'her');
   document.querySelectorAll('.fi').forEach(el=>el.className='fi focus-'+(myRole==='him'?'him':'her'));
   document.getElementById('prog').className='prog-fill prog-'+(myRole==='him'?'him':'her');
   document.getElementById('vt-me').className='vt-tab vt-'+(myRole==='him'?'him':'her')+' active';
@@ -598,17 +976,8 @@ function applyTheme(){
   document.getElementById('vt-partner').textContent=partnerName;
 }
 
-async function fetchCloud(user){
-  try{
-    const r=await fetch(apiUrl+'?user='+encodeURIComponent(user)+'&t='+Date.now(),{cache:'no-store'});
-    const j=await r.json(); return j.data||{};
-  }catch(e){return null;}
-}
-
-async function pushCloud(user,data){
-  try{ await fetch(apiUrl,{method:'POST',body:JSON.stringify({user,data})}); return true; }
-  catch(e){return false;}
-}
+async function fetchCloud(user){try{const r=await fetch(apiUrl+'?user='+encodeURIComponent(user)+'&t='+Date.now(),{cache:'no-store'});const j=await r.json();return j.data||{};}catch(e){return null;}}
+async function pushCloud(user,data){try{await fetch(apiUrl,{method:'POST',body:JSON.stringify({user,data})});return true;}catch(e){return false;}}
 
 async function fetchBoth(){
   setSyncStatus('load','同步中…');
@@ -628,14 +997,9 @@ async function pushMy(){
   if(ok) setTimeout(fetchBoth,800);
 }
 
-function activeData(){ return viewMode==='me'?myData:partnerData; }
-function isViewing(){ return viewMode==='partner'; }
-function setView(v){
-  viewMode=v;
-  document.getElementById('vt-me').classList.toggle('active',v==='me');
-  document.getElementById('vt-partner').classList.toggle('active',v==='partner');
-  renderAll();
-}
+function activeData(){return viewMode==='me'?myData:partnerData;}
+function isViewing(){return viewMode==='partner';}
+function setView(v){viewMode=v;document.getElementById('vt-me').classList.toggle('active',v==='me');document.getElementById('vt-partner').classList.toggle('active',v==='partner');renderAll();}
 
 function bpStatus(s,d){
   if(s<120&&d<80) return {cls:'ok',lbl:'正常'};
@@ -645,17 +1009,21 @@ function bpStatus(s,d){
 }
 
 function switchTab(t){
-  ['bp','water','chart','history','settings'].forEach((n,i)=>{
+  ['bp','water','weight','sleep','med','chart','history','settings'].forEach((n,i)=>{
     document.querySelectorAll('.tab')[i].classList.toggle('active',n===t);
     document.getElementById('tab-'+n).classList.toggle('active',n===t);
   });
   if(t==='chart') setTimeout(renderCharts,50);
   if(t==='history') renderHistory();
   if(t==='water') renderWater();
+  if(t==='weight') renderWeight();
+  if(t==='sleep') renderSleep();
+  if(t==='med') renderMed();
   if(t==='settings'){
     document.getElementById('set-name').value=myName;
     document.getElementById('set-partner').value=partnerName;
     document.getElementById('set-weight').value=myData.weight||'';
+    document.getElementById('set-height').value=myData.height||'';
     document.getElementById('set-api').value=apiUrl||'';
     renderContainerEditor();
   }
@@ -683,16 +1051,20 @@ async function saveBP(){
   const h=parseInt(document.getElementById('hr').value);
   const note=document.getElementById('bp-note').value.trim();
   if(!s||!d||!h){toast('請填寫收縮壓、舒張壓和心跳');return;}
+  const alerts=checkBPAlert(s,d,h);
   const btn=document.getElementById('save-bp-btn');
   btn.textContent='儲存中…';btn.disabled=true;
   (myData.bpRecords=myData.bpRecords||[]).unshift({date:todayStr(),time:timeStr(),period:myData.selTime||'morning',systolic:s,diastolic:d,heartrate:h,note});
   await pushMy();
   ['sys','dia','hr','bp-note'].forEach(id=>document.getElementById(id).value='');
   btn.textContent='儲存紀錄';btn.disabled=false;
-  renderBP();toast('血壓已記錄 ✓');
+  renderBP();
+  if(alerts.length) alerts.forEach(a=>notify('🔔 健康提醒',a));
+  else toast('血壓已記錄 ✓');
 }
 
 function renderBP(){
+  renderBPAlerts();
   document.getElementById('view-banner-bp').innerHTML=viewBanner('血壓紀錄');
   document.getElementById('bp-input-card').style.display=isViewing()?'none':'block';
   const data=activeData();
@@ -706,7 +1078,7 @@ function renderBP(){
     const st=bpStatus(r.systolic,r.diastolic);
     return `<div class="ri">
       <div><div class="rtime">${r.time}${r.note?' · '+r.note:''}</div>
-      <div class="rval"><span class="${st.cls}">${r.systolic}/${r.diastolic}</span><span style="color:var(--text3);font-size:12px;"> mmHg</span> &nbsp;♡ ${r.heartrate}<span style="color:var(--text3);font-size:12px;"> bpm</span> <span style="font-size:11px;color:var(--text3);"> ${st.lbl}</span></div></div>
+      <div class="rval"><span class="${st.cls}">${r.systolic}/${r.diastolic}</span><span style="color:var(--text3);font-size:12px;"> mmHg</span> ♡ ${r.heartrate}<span style="color:var(--text3);font-size:12px;"> bpm</span> <span style="font-size:11px;color:var(--text3);"> ${st.lbl}</span></div></div>
       <div style="display:flex;align-items:center;gap:7px;">
         <span class="badge ${r.period==='morning'?'bam':pmCls}">${r.period==='morning'?'早':'晚'}</span>
         ${!isViewing()?`<button class="del-btn" onclick="delBP(${i})">✕</button>`:''}
@@ -715,7 +1087,7 @@ function renderBP(){
 }
 
 async function delBP(i){
-  const today=todayStr(), tR=(myData.bpRecords||[]).filter(r=>r.date===today);
+  const today=todayStr(),tR=(myData.bpRecords||[]).filter(r=>r.date===today);
   const idx=(myData.bpRecords||[]).indexOf(tR[i]);
   if(idx>-1){myData.bpRecords.splice(idx,1);await pushMy();renderBP();toast('已刪除');}
 }
@@ -734,7 +1106,7 @@ function renderWater(){
   document.getElementById('water-log-title').textContent=isViewing()?partnerName+'的今日明細':'今日明細';
   document.getElementById('total-disp').className='w-num '+(pr==='him'?'him-col':'her-col');
   document.getElementById('prog').className='prog-fill prog-'+(pr==='him'?'him':'her');
-  const goal=(data.weight||0)*40, total=getTotalW(data);
+  const goal=(data.weight||0)*40,total=getTotalW(data);
   const pct=goal>0?Math.min(100,Math.round(total/goal*100)):0;
   document.getElementById('total-disp').textContent=total;
   document.getElementById('goal-disp').textContent=goal?'/ '+goal+' mL 目標':'/ 未設定體重';
@@ -746,11 +1118,7 @@ function renderWater(){
   if(!recs.length){log.innerHTML='<div class="empty">今日尚未喝水</div>';return;}
   log.innerHTML=recs.slice().reverse().map((r,ri)=>{
     const ri2=recs.length-1-ri;
-    return `<div class="ri">
-      <div><div class="rtime">${r.time}${r.container?' · '+r.container:''}</div>
-      <div class="rval" style="color:${pr==='him'?'var(--blue)':'var(--pink)'};">${r.amount} mL</div></div>
-      ${!isViewing()?`<button class="del-btn" onclick="delWater(${ri2})">✕</button>`:''}
-    </div>`;
+    return `<div class="ri"><div><div class="rtime">${r.time}${r.container?' · '+r.container:''}</div><div class="rval" style="color:${pr==='him'?'var(--blue)':'var(--pink)'};">${r.amount} mL</div></div>${!isViewing()?`<button class="del-btn" onclick="delWater(${ri2})">✕</button>`:''}</div>`;
   }).join('');
 }
 
@@ -759,27 +1127,31 @@ async function addManual(){
   if(!a||a<10){toast('請輸入飲水量（mL）');return;}
   (myData.waterRecords=myData.waterRecords||[]).push({date:todayStr(),time:timeStr(),amount:a});
   document.getElementById('manual-w').value='';
-  await pushMy(); renderWater(); toast(a+' mL 已記錄 ✓');
+  await pushMy();renderWater();toast(a+' mL 已記錄 ✓');
 }
 
 async function delWater(idx){
-  const today=todayStr(), recs=(myData.waterRecords||[]).filter(r=>r.date===today);
+  const today=todayStr(),recs=(myData.waterRecords||[]).filter(r=>r.date===today);
   const gi=(myData.waterRecords||[]).indexOf(recs[idx]);
   if(gi>-1){myData.waterRecords.splice(gi,1);await pushMy();renderWater();toast('已刪除');}
 }
 
 // ===== 趨勢圖 =====
-function getLast7Days(){ const d=[]; for(let i=6;i>=0;i--){const t=new Date();t.setDate(t.getDate()-i);d.push(t.toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}));} return d; }
-function getLast7Labels(){ const d=[]; for(let i=6;i>=0;i--){const t=new Date();t.setDate(t.getDate()-i);d.push((t.getMonth()+1)+'/'+(t.getDate()));} return d; }
-function getBPForDay(data,date){ const r=(data.bpRecords||[]).filter(r=>r.date===date); if(!r.length) return {s:null,d:null,h:null}; return {s:Math.round(r.reduce((a,x)=>a+x.systolic,0)/r.length),d:Math.round(r.reduce((a,x)=>a+x.diastolic,0)/r.length),h:Math.round(r.reduce((a,x)=>a+x.heartrate,0)/r.length)}; }
+function getLast7Days(){const d=[];for(let i=6;i>=0;i--){const t=new Date();t.setDate(t.getDate()-i);d.push(t.toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}));}return d;}
+function getLast14Days(){const d=[];for(let i=13;i>=0;i--){const t=new Date();t.setDate(t.getDate()-i);d.push(t.toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}));}return d;}
+function getLast7Labels(){const d=[];for(let i=6;i>=0;i--){const t=new Date();t.setDate(t.getDate()-i);d.push((t.getMonth()+1)+'/'+(t.getDate()));}return d;}
+function getLast14Labels(){const d=[];for(let i=13;i>=0;i--){const t=new Date();t.setDate(t.getDate()-i);d.push((t.getMonth()+1)+'/'+(t.getDate()));}return d;}
+function getBPForDay(data,date){const r=(data.bpRecords||[]).filter(r=>r.date===date);if(!r.length)return{s:null,d:null,h:null};return{s:Math.round(r.reduce((a,x)=>a+x.systolic,0)/r.length),d:Math.round(r.reduce((a,x)=>a+x.diastolic,0)/r.length),h:Math.round(r.reduce((a,x)=>a+x.heartrate,0)/r.length)};}
+function getWeightForDay(data,date){const r=(data.weightRecords||[]).filter(r=>r.date===date);return r.length?r[0].kg:null;}
 
-function setChartView(v){ bpChartView=v; document.getElementById('ct-me').classList.toggle('active',v==='me'); document.getElementById('ct-partner').classList.toggle('active',v==='partner'); renderBPChart(); }
-function setWaterChartView(v){ waterChartView=v; document.getElementById('wt-me').classList.toggle('active',v==='me'); document.getElementById('wt-partner').classList.toggle('active',v==='partner'); renderWaterChart(); }
-function renderCharts(){ renderBPChart(); renderWaterChart(); }
+function setChartView(v){bpChartView=v;document.getElementById('ct-me').classList.toggle('active',v==='me');document.getElementById('ct-partner').classList.toggle('active',v==='partner');renderBPChart();}
+function setWaterChartView(v){waterChartView=v;document.getElementById('wt-me').classList.toggle('active',v==='me');document.getElementById('wt-partner').classList.toggle('active',v==='partner');renderWaterChart();}
+function setWeightChartView(v){weightChartView=v;document.getElementById('wgt-me').classList.toggle('active',v==='me');document.getElementById('wgt-partner').classList.toggle('active',v==='partner');renderWeightChart();}
+function renderCharts(){renderBPChart();renderWaterChart();renderWeightChart();}
 
 function renderBPChart(){
   const data=bpChartView==='me'?myData:partnerData;
-  const days=getLast7Days(), labels=getLast7Labels();
+  const days=getLast7Days(),labels=getLast7Labels();
   const ctx=document.getElementById('bp-chart').getContext('2d');
   if(bpChartInst) bpChartInst.destroy();
   bpChartInst=new Chart(ctx,{type:'line',data:{labels,datasets:[
@@ -791,9 +1163,9 @@ function renderBPChart(){
 
 function renderWaterChart(){
   const data=waterChartView==='me'?myData:partnerData;
-  const days=getLast7Days(), labels=getLast7Labels();
+  const days=getLast7Days(),labels=getLast7Labels();
   const goal=(data.weight||0)*40;
-  const pctData=days.map(d=>{ const w=getWaterForDay(data,d); return goal>0?Math.round(w/goal*100):0; });
+  const pctData=days.map(d=>{const w=getWaterForDay(data,d);return goal>0?Math.round(w/goal*100):0;});
   const pr=waterChartView==='me'?myRole:(myRole==='him'?'her':'him');
   const col=pr==='him'?'#5b8def':'#e86fa8';
   const colBg=pr==='him'?'rgba(91,141,239,0.15)':'rgba(232,111,168,0.15)';
@@ -802,15 +1174,26 @@ function renderWaterChart(){
   waterChartInst=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'達成率%',data:pctData,backgroundColor:pctData.map(v=>v>=100?'rgba(62,207,142,0.5)':colBg),borderColor:pctData.map(v=>v>=100?'#3ecf8e':col),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#454d6a',font:{size:11}},grid:{display:false}},y:{ticks:{color:'#454d6a',font:{size:11},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'},min:0,max:120}}}});
 }
 
+function renderWeightChart(){
+  const data=weightChartView==='me'?myData:partnerData;
+  const days=getLast14Days(),labels=getLast14Labels();
+  const wData=days.map(d=>getWeightForDay(data,d));
+  const pr=weightChartView==='me'?myRole:(myRole==='him'?'her':'him');
+  const col=pr==='him'?'#5b8def':'#e86fa8';
+  const ctx=document.getElementById('weight-chart').getContext('2d');
+  if(weightChartInst) weightChartInst.destroy();
+  weightChartInst=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'體重',data:wData,borderColor:col,backgroundColor:pr==='him'?'rgba(91,141,239,0.08)':'rgba(232,111,168,0.08)',tension:0.3,pointRadius:4,pointBackgroundColor:col,spanGaps:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#454d6a',font:{size:10},maxRotation:45},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#454d6a',font:{size:11},callback:v=>v+'kg'},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+}
+
 // ===== 歷史 =====
 function renderHistory(){
   const data=activeData();
   const pr=isViewing()?(myRole==='him'?'her':'him'):myRole;
   const pmCls=pr==='him'?'bpm-him':'bpm-her';
   document.getElementById('hist-title').textContent=isViewing()?partnerName+'的血壓歷史':'我的血壓歷史';
-  document.getElementById('water-hist-title').textContent=isViewing()?partnerName+'的喝水歷史':'近14天喝水紀錄';
+  document.getElementById('water-hist-title').textContent=isViewing()?partnerName+'的喝水歷史':'近14天喝水';
   const recs=data.bpRecords||[];
-  const avgEl=document.getElementById('avg-stats'), histEl=document.getElementById('hist-list');
+  const avgEl=document.getElementById('avg-stats'),histEl=document.getElementById('hist-list');
   if(!recs.length){avgEl.innerHTML='';histEl.innerHTML='<div class="empty">尚無血壓紀錄</div>';}
   else{
     const last=recs.slice(0,Math.min(7,recs.length));
@@ -825,46 +1208,29 @@ function renderHistory(){
       return `<div class="ri"><div><div class="rtime">${date} ${r.time}${r.note?' · '+r.note:''}</div><div class="rval"><span class="${st.cls}">${r.systolic}/${r.diastolic}</span><span style="color:var(--text3);font-size:12px;"> mmHg</span> ♡ ${r.heartrate}<span style="color:var(--text3);font-size:12px;"> bpm</span> <span style="font-size:11px;color:var(--text3);">${st.lbl}</span></div></div><span class="badge ${r.period==='morning'?'bam':pmCls}">${r.period==='morning'?'早':'晚'}</span></div>`;
     }).join('')).join('');
   }
-
-  // 喝水歷史（近14天）
   const goal=(data.weight||0)*40;
   const barCol=pr==='him'?'var(--blue)':'var(--pink)';
-  const days14=[]; for(let i=13;i>=0;i--){const t=new Date();t.setDate(t.getDate()-i);days14.push(t.toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}));}
+  const days14=getLast14Days();
+  const whRows=days14.map(date=>{const w=getWaterForDay(data,date);const pct=goal>0?Math.min(100,Math.round(w/goal*100)):0;const label=date.replace(/\d{4}\/(\d{2})\/(\d{2})/,'$1/$2');return{date,label,w,pct};}).filter(r=>r.w>0).reverse();
   const whEl=document.getElementById('water-hist-list');
-  const whRows=days14.map(date=>{
-    const w=getWaterForDay(data,date);
-    const pct=goal>0?Math.min(100,Math.round(w/goal*100)):0;
-    const label=date.replace(/\d{4}\/(\d{2})\/(\d{2})/,'$1/$2');
-    return {date,label,w,pct};
-  }).filter(r=>r.w>0).reverse();
-  if(!whRows.length){whEl.innerHTML='<div class="empty">尚無喝水紀錄</div>';return;}
-  whEl.innerHTML=whRows.map(r=>`
-    <div class="water-hist-row">
-      <div class="whd">${r.label}</div>
-      <div class="whbar-wrap"><div class="whbar" style="width:${r.pct}%;background:${r.pct>=100?'var(--green)':barCol};"></div></div>
-      <div class="wh-ml" style="color:${r.pct>=100?'var(--green)':barCol};">${r.w}</div>
-      <div class="wh-pct">${r.pct}%</div>
-    </div>`).join('');
+  whEl.innerHTML=whRows.length?whRows.map(r=>`<div class="water-hist-row"><div class="whd">${r.label}</div><div class="whbar-wrap"><div class="whbar" style="width:${r.pct}%;background:${r.pct>=100?'var(--green)':barCol};"></div></div><div class="wh-ml" style="color:${r.pct>=100?'var(--green)':barCol};">${r.w}</div><div class="wh-pct">${r.pct}%</div></div>`).join(''):'<div class="empty">尚無喝水紀錄</div>';
 
-  // 另一半摘要
   const pData=viewMode==='me'?partnerData:myData;
   const pName=viewMode==='me'?partnerName:myName;
   const pRole=viewMode==='me'?(myRole==='him'?'her':'him'):myRole;
   const pToday=(pData.bpRecords||[]).filter(r=>r.date===todayStr());
-  const pW=getTotalW(pData), pGoal=(pData.weight||0)*40;
+  const pW=getTotalW(pData),pGoal=(pData.weight||0)*40;
   const pPct=pGoal>0?Math.min(100,Math.round(pW/pGoal*100)):0;
-  const pCls=pRole==='him'?'him-card':'her-card';
-  const pTxtCls=pRole==='him'?'him-col':'her-col';
+  const pCls=pRole==='him'?'him-card':'her-card',pTxtCls=pRole==='him'?'him-col':'her-col';
+  const pSl=(pData.sleepRecords||[]).find(r=>r.date===todayStr());
   document.getElementById('partner-summary').innerHTML=`<div class="partner-card ${pCls}">
-    <div class="partner-row">
-      <div><div class="partner-name ${pTxtCls}">${pName} 今日狀況</div><div style="font-size:11px;color:var(--text3);">${todayStr()}</div></div>
-      <div style="font-size:11px;color:var(--text3);">點「另一半」查看詳情</div>
-    </div>
+    <div class="partner-row"><div><div class="partner-name ${pTxtCls}">${pName} 今日狀況</div><div style="font-size:11px;color:var(--text3);">${todayStr()}</div></div><div style="font-size:11px;color:var(--text3);">點「另一半」查看詳情</div></div>
     <div class="partner-stats">
       <div class="pstat"><div class="pstat-val" style="color:${pRole==='him'?'var(--blue)':'var(--pink)'};">${pToday.length}</div><div class="pstat-lbl">次血壓</div></div>
-      <div class="pstat"><div class="pstat-val" style="color:${pRole==='him'?'var(--blue)':'var(--pink)'};">${pW}</div><div class="pstat-lbl">mL 飲水</div></div>
+      <div class="pstat"><div class="pstat-val" style="color:${pRole==='him'?'var(--blue)':'var(--pink)'};">${pW}</div><div class="pstat-lbl">mL飲水</div></div>
       <div class="pstat"><div class="pstat-val" style="color:${pRole==='him'?'var(--blue)':'var(--pink)'};">${pPct}%</div><div class="pstat-lbl">飲水達成</div></div>
       ${pToday.length?`<div class="pstat"><div class="pstat-val ${bpStatus(pToday[0].systolic,pToday[0].diastolic).cls}">${pToday[0].systolic}/${pToday[0].diastolic}</div><div class="pstat-lbl">最新血壓</div></div>`:''}
+      ${pSl?`<div class="pstat"><div class="pstat-val">${sqEmoji(pSl.quality)}</div><div class="pstat-lbl">睡眠品質</div></div>`:''}
     </div>
   </div>`;
 }
@@ -873,8 +1239,10 @@ async function saveSettings(){
   const n=document.getElementById('set-name').value.trim();
   const p=document.getElementById('set-partner').value.trim();
   const w=parseFloat(document.getElementById('set-weight').value);
-  if(n) myName=n; if(p) partnerName=p;
+  const h=parseFloat(document.getElementById('set-height').value);
+  if(n) myName=n;if(p) partnerName=p;
   if(w&&w>=20&&w<=250) myData.weight=w;
+  if(h&&h>=100&&h<=250) myData.height=h;
   ls('ht_name',myName);ls('ht_pname',partnerName);
   await pushMy();
   document.getElementById('my-name-disp').textContent=myName;
@@ -883,30 +1251,21 @@ async function saveSettings(){
   applyTheme();renderAll();toast('設定已儲存 ✓');
 }
 
-async function updateAPI(){
-  const u=document.getElementById('set-api').value.trim();
-  if(!u){toast('請輸入網址');return;}
-  apiUrl=u;ls('ht_api',u);fetchBoth();toast('API 已更新，重新同步中…');
-}
+async function updateAPI(){const u=document.getElementById('set-api').value.trim();if(!u){toast('請輸入網址');return;}apiUrl=u;ls('ht_api',u);fetchBoth();toast('API 已更新，重新同步中…');}
 
 async function clearAll(){
   if(confirm('確定要清除我的所有資料？\n（不影響另一半的資料）')){
-    myData={...DEFAULT,weight:myData.weight};
+    myData={...DEFAULT,weight:myData.weight,height:myData.height};
     await pushMy();renderAll();toast('資料已清除');
   }
 }
 
-function renderAll(){ renderBP();renderWater();renderHistory(); }
+function renderAll(){renderStreak();renderBP();renderWater();renderWeight();renderSleep();renderMed();renderHistory();}
 
 (function(){
-  myRole=ls('ht_role')||'';
-  myName=ls('ht_name')||'';
-  partnerName=ls('ht_pname')||'';
-  apiUrl=ls('ht_api')||'';
-  const saved=ls('ht_data');
-  if(saved){try{myData={...DEFAULT,...JSON.parse(saved)};}catch(e){}}
-  const savedC=ls('ht_containers');
-  if(savedC){try{myContainers=JSON.parse(savedC);}catch(e){}}
+  myRole=ls('ht_role')||'';myName=ls('ht_name')||'';partnerName=ls('ht_pname')||'';apiUrl=ls('ht_api')||'';
+  const saved=ls('ht_data');if(saved){try{myData={...DEFAULT,...JSON.parse(saved)};}catch(e){}}
+  const savedC=ls('ht_containers');if(savedC){try{myContainers=JSON.parse(savedC);}catch(e){}}
   if(myRole&&apiUrl) initApp();
 })();
 </script>
