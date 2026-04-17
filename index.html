@@ -23,7 +23,7 @@
   --r:14px;--rs:9px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:18px;}
 body{padding-bottom:88px;}
 
 /* setup */
@@ -329,6 +329,29 @@ body{padding-bottom:88px;}
       <div class="frow"><div class="f"><label>備註</label><input class="fi" type="text" id="bp-note" placeholder="飯後、運動後…"></div></div>
       <button class="btn" id="save-bp-btn" onclick="saveBP()">儲存紀錄</button>
     </div>
+
+    <!-- 補記血壓 -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div class="card-title" style="margin-bottom:0;">補記過去的血壓</div>
+        <div class="period-toggle">
+          <button class="ptab am active" id="btn-bm" onclick="setBT('morning')">早</button>
+          <button class="ptab pm" id="btn-be" onclick="setBT('evening')">晚</button>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="f"><label>日期</label><input class="fi" type="date" id="back-date"></div>
+        <div class="f w80"><label>時間</label><input class="fi" type="time" id="back-time" value="08:00"></div>
+      </div>
+      <div class="frow">
+        <div class="f"><label>收縮壓</label><input class="fi" type="number" id="back-sys" placeholder="120" inputmode="numeric"></div>
+        <div class="f"><label>舒張壓</label><input class="fi" type="number" id="back-dia" placeholder="80" inputmode="numeric"></div>
+        <div class="f narrow"><label>心跳</label><input class="fi" type="number" id="back-hr" placeholder="72" inputmode="numeric"></div>
+      </div>
+      <div class="frow"><div class="f"><label>備註</label><input class="fi" type="text" id="back-note" placeholder="補記說明…"></div></div>
+      <button class="btn btn-amber" id="save-back-btn" onclick="saveBackBP()">補記血壓</button>
+    </div>
+
     <div class="card">
       <div class="card-title" id="today-bp-title">今日血壓</div>
       <div id="today-bp"><div class="empty">今日尚無紀錄</div></div>
@@ -375,6 +398,19 @@ body{padding-bottom:88px;}
     <div class="card">
       <div class="card-title" id="water-log-title">今日明細</div>
       <div id="water-log"></div>
+    </div>
+
+    <!-- 補記喝水 -->
+    <div class="card" id="water-back-card">
+      <div class="card-title">補記過去的喝水</div>
+      <div class="frow">
+        <div class="f"><label>日期</label><input class="fi" type="date" id="back-w-date"></div>
+        <div class="f w80"><label>時間</label><input class="fi" type="time" id="back-w-time" value="08:00"></div>
+      </div>
+      <div class="frow" style="margin-bottom:0;">
+        <div class="f"><label>飲水量（mL）</label><input class="fi" type="number" id="back-w-ml" placeholder="500" inputmode="numeric"></div>
+        <button class="btn btn-amber btn-sm" style="margin-top:20px;" onclick="saveBackWater()">補記喝水</button>
+      </div>
     </div>
   </div>
 
@@ -961,6 +997,10 @@ function initApp(){
   renderContainerBtns();renderContainerEditor();
   setupReminder();setupMedReminders();
   reqNotif();
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const yStr=yesterday.toISOString().split('T')[0];
+  const bd=document.getElementById('back-date');if(bd) bd.value=yStr;
+  const bwd=document.getElementById('back-w-date');if(bwd) bwd.value=yStr;
   fetchBoth();
   setInterval(fetchBoth,30000);
 }
@@ -1041,6 +1081,57 @@ function setT(t){
   if(t==='evening') btn.classList.add(pmCls);
 }
 
+let backPeriod='morning';
+function setBT(t){
+  backPeriod=t;
+  document.getElementById('btn-bm').classList.toggle('active',t==='morning');
+  const pmCls=myRole==='him'?'active-him':'active-her';
+  const btn=document.getElementById('btn-be');
+  btn.classList.remove('active-him','active-her');
+  if(t==='evening') btn.classList.add(pmCls);
+}
+
+function dateToTW(d){
+  if(!d) return '';
+  const [y,m,dd]=d.split('-');
+  return y+'/'+m.padStart(2,'0')+'/'+dd.padStart(2,'0');
+}
+
+async function saveBackBP(){
+  if(isViewing()){toast('查看模式，無法記錄');return;}
+  const date=document.getElementById('back-date').value;
+  const time=document.getElementById('back-time').value||'08:00';
+  const s=parseInt(document.getElementById('back-sys').value);
+  const d=parseInt(document.getElementById('back-dia').value);
+  const h=parseInt(document.getElementById('back-hr').value);
+  const note=document.getElementById('back-note').value.trim();
+  if(!date){toast('請選擇日期');return;}
+  if(!s||!d||!h){toast('請填寫收縮壓、舒張壓和心跳');return;}
+  const btn=document.getElementById('save-back-btn');
+  btn.textContent='儲存中…';btn.disabled=true;
+  const twDate=dateToTW(date);
+  (myData.bpRecords=myData.bpRecords||[]).push({date:twDate,time,period:backPeriod,systolic:s,diastolic:d,heartrate:h,note});
+  myData.bpRecords.sort((a,b)=>b.date.localeCompare(a.date)||b.time.localeCompare(a.time));
+  await pushMy();
+  ['back-sys','back-dia','back-hr','back-note'].forEach(id=>document.getElementById(id).value='');
+  btn.textContent='補記血壓';btn.disabled=false;
+  renderBP();toast('✓ 已補記 '+twDate+' 的血壓');
+}
+
+async function saveBackWater(){
+  if(isViewing()){toast('查看模式，無法記錄');return;}
+  const date=document.getElementById('back-w-date').value;
+  const time=document.getElementById('back-w-time').value||'08:00';
+  const ml=parseInt(document.getElementById('back-w-ml').value);
+  if(!date){toast('請選擇日期');return;}
+  if(!ml||ml<10){toast('請輸入飲水量');return;}
+  const twDate=dateToTW(date);
+  (myData.waterRecords=myData.waterRecords||[]).push({date:twDate,time,amount:ml});
+  await pushMy();
+  document.getElementById('back-w-ml').value='';
+  renderWater();toast('✓ 已補記 '+twDate+' 喝水 '+ml+'mL');
+}
+
 function viewBanner(sec){
   if(!isViewing()) return '';
   const pr=myRole==='him'?'her':'him';
@@ -1070,6 +1161,7 @@ function renderBP(){
   renderBPAlerts();
   document.getElementById('view-banner-bp').innerHTML=viewBanner('血壓紀錄');
   document.getElementById('bp-input-card').style.display=isViewing()?'none':'block';
+  document.querySelectorAll('.btn-amber').forEach(el=>{ if(el.id==='save-back-btn') el.closest('.card').style.display=isViewing()?'none':'block'; });
   const data=activeData();
   const pr=isViewing()?(myRole==='him'?'her':'him'):myRole;
   const pmCls=pr==='him'?'bpm-him':'bpm-her';
@@ -1105,6 +1197,8 @@ function renderWater(){
   document.getElementById('view-banner-w').innerHTML=viewBanner('喝水紀錄');
   document.getElementById('water-input-card').style.display=isViewing()?'none':'block';
   document.getElementById('reminder-card-wrap').style.display=isViewing()?'none':'block';
+  const backCard=document.getElementById('water-back-card');
+  if(backCard) backCard.style.display=isViewing()?'none':'block';
   document.getElementById('water-card-title').textContent=isViewing()?partnerName+'的飲水進度':'今日飲水';
   document.getElementById('water-log-title').textContent=isViewing()?partnerName+'的今日明細':'今日明細';
   document.getElementById('total-disp').className='w-num '+(pr==='him'?'him-col':'her-col');
